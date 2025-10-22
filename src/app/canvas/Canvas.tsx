@@ -8,6 +8,8 @@ const Canvas = () => {
     const transformerRef = useRef();
     const { stageRef, layerRef } = useCanvas();
     const [selectedIds, setSelectedIds] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null);
     const [selectionRectangle, setSelectionRectangle] = useState({
         visible: false,
         x1: 0,
@@ -31,6 +33,11 @@ const Canvas = () => {
 
     // Click handler for stage
     const handleStageClick = (e) => {
+        if (isDragging) {
+            setIsDragging(false);
+            setDragStartPos(null);
+            return;
+        }
 
         // If click on empty area - remove all selections
         if (e.target === e.target.getStage()) {
@@ -59,12 +66,16 @@ const Canvas = () => {
     };
 
     const handleMouseDown = (e) => {
+
         if (e.target !== e.target.getStage()) {
             return;
         }
 
-        isSelecting.current = true;
         const pos = e.target.getStage().getPointerPosition();
+        setDragStartPos(pos);
+        setIsDragging(false);
+
+        isSelecting.current = true;
         setSelectionRectangle({
             visible: true,
             x1: pos.x,
@@ -78,8 +89,17 @@ const Canvas = () => {
         if (!isSelecting.current) {
             return;
         }
+        if (!dragStartPos) return;
 
         const pos = e.target.getStage().getPointerPosition();
+        const dx = Math.abs(pos.x - dragStartPos.x);
+        const dy = Math.abs(pos.y - dragStartPos.y);
+
+        // if mouse moved more than a few pixels, it's a drag
+        if (dx > 5 || dy > 5) {
+            setIsDragging(true);
+        }
+
         setSelectionRectangle({
             ...selectionRectangle,
             x2: pos.x,
@@ -92,6 +112,45 @@ const Canvas = () => {
             return;
         }
         isSelecting.current = false;
+
+        // Select all objects or shapes under the selection rectangle
+        const layer = layerRef.current;
+        if (!layer) return;
+
+        const selBox = {
+            x: Math.min(selectionRectangle.x1, selectionRectangle.x2),
+            y: Math.min(selectionRectangle.y1, selectionRectangle.y2),
+            width: Math.abs(selectionRectangle.x2 - selectionRectangle.x1),
+            height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
+        };
+
+        // Only proceed if selection box has meaningful size
+        if (selBox.width < 2 && selBox.height < 2) {
+            return;
+        }
+
+        // Find all shapes that intersect with selection rectangle
+        const allNodes = layer.getChildren();
+        const shapes = allNodes.filter((node) => {
+            // Skip transformer and selection rectangle itself
+            const className = node.getClassName();
+            if (className === 'Transformer' || !node.id()) {
+                return false;
+            }
+
+            const nodeBox = node.getClientRect();
+
+            // Check if boxes intersect
+            return !(
+                nodeBox.x > selBox.x + selBox.width ||
+                nodeBox.x + nodeBox.width < selBox.x ||
+                nodeBox.y > selBox.y + selBox.height ||
+                nodeBox.y + nodeBox.height < selBox.y
+            );
+        });
+
+        const ids = shapes.map(shape => shape.id()).filter(Boolean);
+        setSelectedIds(ids);
 
         setTimeout(() => {
             setSelectionRectangle({
@@ -122,6 +181,7 @@ const Canvas = () => {
                         width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
                         height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
                         fill="rgba(0,0,255,0.5)"
+                        listening={false}
                     />
                 )}
 
