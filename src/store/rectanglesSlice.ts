@@ -15,10 +15,7 @@ interface RectanglesState {
 }
 
 const initialState: RectanglesState = {
-    rectangles: [
-        { id: "rect1", x: 50, y: 60, width: 150, height: 100, fill: "#4a90e2" },
-        { id: "rect2", x: 250, y: 200, width: 120, height: 80, fill: "#f08a5d" },
-    ],
+    rectangles: [],
     selectedId: null,
 };
 
