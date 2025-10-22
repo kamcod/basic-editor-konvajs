@@ -1,10 +1,9 @@
 import {useAppDispatch} from "@/store/hooks";
-import {addRectangle} from "@/store/rectanglesSlice";
 
 export default function Toolbar(){
     const dispatch = useAppDispatch();
 
-    const handleAddRect = () => {
+    const addRectangle = () => {
         const newRect = {
             id: `rect-${Date.now()}`,
             x: Math.random() * 400,
@@ -14,13 +13,29 @@ export default function Toolbar(){
             fill: "#4a90e2",
             rotation: 0
         };
-        dispatch(addRectangle(newRect));
+        // dispatch(setShapes(newRect));
+    }
+    const handleAddShapes = (shape: string) => {
+        switch (shape.type) {
+            case 'rectangle':
+                addRectangle();
+                break;
+            case 'circle':
+                addRectangle();
+                break;
+            case 'arrow':
+                addRectangle();
+                break;
+            default:
+                addRectangle();
+        }
     }
     return (
         <div className="min-h-screen w-30 flex flex-col gap-2 items-center py-6 border-r border-gray-200">
             <div className="font-semibold underline">Shapes</div>
-            <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={handleAddRect}>Rectangle</button>
-            <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={handleAddRect}>Circle</button>
+            <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={() => handleAddShapes('rectangle')}>Rectangle</button>
+            <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={() => handleAddShapes('circle')}>Circle</button>
+            <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={() => handleAddShapes('arrow')}>Arrow</button>
         </div>
     )
 }

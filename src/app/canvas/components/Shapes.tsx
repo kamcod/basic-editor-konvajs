@@ -1,4 +1,4 @@
-import {Rect, Circle} from "react-konva";
+import {Rect, Circle, Arrow} from "react-konva";
 import {ShapeI} from "@/app/types/canvas.dto";
 
 const shapes: ShapeI[] = [
@@ -22,6 +22,20 @@ const shapes: ShapeI[] = [
             y: 500,
             radius: 100,
             fill: "#4a90e2"
+        }
+    },
+    {
+        type: 'arrow',
+        attributes: {
+            id: `arrow-${Date.now()}`,
+            x: 400,
+            y: 550,
+            points: [0, 0, 100, 100],
+            pointerLength: 10,
+            pointerWidth: 10,
+            fill: "black",
+            stroke: "black",
+            strokeWidth: 1
         }
     }
 ];
@@ -54,12 +68,28 @@ const AddCircle = ( { data }) => {
         draggable={draggable ?? true}
     />
 }
+const AddArrow = ( { data }) => {
+    const { id, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth } = data;
+    return <Arrow
+        id={id}
+        x={x}
+        y={y}
+        points={points}
+        pointerLength={pointerLength}
+        pointerWidth={pointerWidth}
+        fill={fill}
+        stroke={stroke}
+        strokeWidth={strokeWidth}
+    />
+}
 const renderShapes = (shape, index) => {
     switch (shape.type) {
         case 'rectangle':
             return <Rectangle key={index} data={shape.attributes} />
         case 'circle':
             return <AddCircle key={index} data={shape.attributes} />
+        case 'arrow':
+            return <AddArrow key={index} data={shape.attributes} />
         default:
             return <Rectangle key={index} data={shape.attributes} />
     }
