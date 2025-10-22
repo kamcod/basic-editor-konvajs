@@ -1,9 +1,13 @@
-import { Stage, Layer, Rect } from 'react-konva';
+import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import Shapes from "@/app/canvas/components/Shapes";
-import {useRef, useState} from "react";
+import {useRef, useState, useEffect} from "react";
+import { useCanvas } from "@/contexts/CanvasContext";
 
 const Canvas = () => {
     const isSelecting = useRef(false);
+    const transformerRef = useRef();
+    const { stageRef, layerRef } = useCanvas();
+    const [selectedIds, setSelectedIds] = useState([]);
     const [selectionRectangle, setSelectionRectangle] = useState({
         visible: false,
         x1: 0,
@@ -12,13 +16,53 @@ const Canvas = () => {
         y2: 0,
     });
 
+    useEffect(() => {
+        const layer = layerRef.current;
+        const transformer = transformerRef.current;
+        if (!layer || !transformer) return;
+
+        const stage = layer.getStage();
+        const selectedNodes = stage
+            .find<Konva.Rect>((node) => selectedIds.includes(node.id()));
+
+        transformer.nodes(selectedNodes);
+        transformer.getLayer()?.batchDraw();
+    }, [selectedIds]);
+
+    // Click handler for stage
+    const handleStageClick = (e) => {
+
+        // If click on empty area - remove all selections
+        if (e.target === e.target.getStage()) {
+            setSelectedIds([]);
+            return;
+        }
+
+        const clickedId = e.target.id();
+
+        // Do we pressed shift or ctrl?
+        const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+        const isSelected = selectedIds.includes(clickedId);
+
+        if (!metaPressed && !isSelected) {
+            // If no key pressed and the node is not selected
+            // select just one
+            setSelectedIds([clickedId]);
+        } else if (metaPressed && isSelected) {
+            // If we pressed keys and node was selected
+            // we need to remove it from selection
+            setSelectedIds(selectedIds.filter(id => id !== clickedId));
+        } else if (metaPressed && !isSelected) {
+            // Add the node into selection
+            setSelectedIds([...selectedIds, clickedId]);
+        }
+    };
+
     const handleMouseDown = (e) => {
-        // Do nothing if we mousedown on any shape
         if (e.target !== e.target.getStage()) {
             return;
         }
 
-        // Start selection rectangle
         isSelecting.current = true;
         const pos = e.target.getStage().getPointerPosition();
         setSelectionRectangle({
@@ -31,7 +75,6 @@ const Canvas = () => {
     };
 
     const handleMouseMove = (e) => {
-        // Do nothing if we didn't start selection
         if (!isSelecting.current) {
             return;
         }
@@ -45,13 +88,11 @@ const Canvas = () => {
     };
 
     const handleMouseUp = () => {
-        // Do nothing if we didn't start selection
         if (!isSelecting.current) {
             return;
         }
         isSelecting.current = false;
 
-        // Update visibility in timeout, so we can check it in click event
         setTimeout(() => {
             setSelectionRectangle({
                 ...selectionRectangle,
@@ -62,14 +103,16 @@ const Canvas = () => {
 
     return (
         <Stage
+            ref={stageRef}
             width={window.innerWidth * 0.8}
             height={window.innerHeight * 0.9}
             style={{background: 'white', border: '1px solid gray'}}
+            onClick={handleStageClick}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseMove={handleMouseMove}
         >
-            <Layer>
+            <Layer ref={layerRef}>
                 <Shapes />
                 {/* Selection rectangle */}
                 {selectionRectangle.visible && (
@@ -81,6 +124,18 @@ const Canvas = () => {
                         fill="rgba(0,0,255,0.5)"
                     />
                 )}
+
+                <Transformer
+                    ref={transformerRef}
+                    boundBoxFunc={(oldBox, newBox) => {
+                        // Limit resize
+                        if (newBox.width < 5 || newBox.height < 5) {
+                            return oldBox;
+                        }
+                        return newBox;
+                    }}
+
+                />
             </Layer>
         </Stage>
     );

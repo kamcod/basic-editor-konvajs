@@ -6,8 +6,8 @@ const shapes: ShapeI[] = [
         type: 'rectangle',
         attributes: {
             id: `rect-${Date.now()}`,
-            x: Math.random() * 400,
-            y: Math.random() * 400,
+            x: 100,
+            y: 100,
             width: 100,
             height: 60,
             fill: "#4a90e2",
@@ -17,9 +17,9 @@ const shapes: ShapeI[] = [
     {
         type: 'circle',
         attributes: {
-            id: `rect-${Date.now()}`,
-            x: Math.random() * 400,
-            y: Math.random() * 400,
+            id: `circle-${Date.now()}`,
+            x: 300,
+            y: 500,
             radius: 100,
             fill: "#4a90e2"
         }
@@ -44,6 +44,7 @@ const Rectangle = ( { data }) => {
 const AddCircle = ( { data }) => {
     const { id, x, y, radius, stroke, strokeWidth, fill, draggable } = data;
     return <Circle
+        id={id}
         x={x}
         y={y}
         radius={radius}
