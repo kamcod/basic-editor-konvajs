@@ -29,7 +29,6 @@ const shapes: ShapeI[] = [
 const Rectangle = ( { data }) => {
     const { id, name, x, y, width, height, fill, rotation, draggable } = data;
     return <Rect
-        key={id}
         id={id}
         x={x}
         y={y}
@@ -45,7 +44,6 @@ const Rectangle = ( { data }) => {
 const AddCircle = ( { data }) => {
     const { id, x, y, radius, stroke, strokeWidth, fill, draggable } = data;
     return <Circle
-        key={id}
         x={x}
         y={y}
         radius={radius}
@@ -55,22 +53,22 @@ const AddCircle = ( { data }) => {
         draggable={draggable ?? true}
     />
 }
-const renderShapes = (shape) => {
+const renderShapes = (shape, index) => {
     switch (shape.type) {
         case 'rectangle':
-            return <Rectangle key={shape.id} data={shape.attributes} />
+            return <Rectangle key={index} data={shape.attributes} />
         case 'circle':
-            return <AddCircle key={shape.id} data={shape.attributes} />
+            return <AddCircle key={index} data={shape.attributes} />
         default:
-            return <Rectangle key={shape.id} data={shape.attributes} />
+            return <Rectangle key={index} data={shape.attributes} />
     }
 };
 
 export default function Shapes(){
     return (
         <>
-            {shapes.map((shape) => (
-                renderShapes(shape)
+            {shapes.map((shape, index) => (
+                renderShapes(shape, index)
             ))}
         </>
     )
