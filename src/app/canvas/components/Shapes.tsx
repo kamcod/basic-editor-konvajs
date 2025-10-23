@@ -69,7 +69,7 @@ const AddCircle = ( { data }) => {
     />
 }
 const AddArrow = ( { data }) => {
-    const { id, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth } = data;
+    const { id, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth, draggable } = data;
     return <Arrow
         id={id}
         x={x}
@@ -80,6 +80,7 @@ const AddArrow = ( { data }) => {
         fill={fill}
         stroke={stroke}
         strokeWidth={strokeWidth}
+        draggable={draggable ?? true}
     />
 }
 const renderShapes = (shape, index) => {
