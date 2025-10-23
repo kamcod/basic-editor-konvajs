@@ -1,13 +1,52 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {ShapeI} from "@/app/types/canvas.dto";
 
+const DUMMY_SHAPES: ShapeI[] = [
+    {
+        type: 'rectangle',
+        attributes: {
+            id: `rect-${Date.now()}`,
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 60,
+            fill: "#4a90e2",
+            rotation: 0,
+        }
+    },
+    {
+        type: 'circle',
+        attributes: {
+            id: `circle-${Date.now()}`,
+            x: 300,
+            y: 500,
+            radius: 100,
+            fill: "#4a90e2"
+        }
+    },
+    {
+        type: 'arrow',
+        attributes: {
+            id: `arrow-${Date.now()}`,
+            x: 400,
+            y: 550,
+            points: [0, 0, 100, 100],
+            pointerLength: 10,
+            pointerWidth: 10,
+            fill: "black",
+            stroke: "black",
+            strokeWidth: 1
+        }
+    }
+]
+
 interface InitialStateI {
     shapes: ShapeI[];
     selectedObjectIds: string[];
 }
 
 const initialState: InitialStateI = {
-    shapes: [],
+    shapes: DUMMY_SHAPES,
     selectedObjectIds: [],
 };
 
