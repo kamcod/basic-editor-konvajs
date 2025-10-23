@@ -2,12 +2,16 @@ import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import Shapes from "@/app/canvas/components/Shapes";
 import {useRef, useState, useEffect} from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {setSelectedObjectIds} from "@/store/reducers/canvasSlice";
 
 const Canvas = () => {
     const isSelecting = useRef(false);
     const transformerRef = useRef();
     const { stageRef, layerRef } = useCanvas();
-    const [selectedIds, setSelectedIds] = useState([]);
+    const dispatch = useAppDispatch();
+
+    const { selectedObjectIds } = useAppSelector(state => state.canvas);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null);
     const [selectionRectangle, setSelectionRectangle] = useState({
@@ -25,11 +29,11 @@ const Canvas = () => {
 
         const stage = layer.getStage();
         const selectedNodes = stage
-            .find<Konva.Rect>((node) => selectedIds.includes(node.id()));
+            .find<Konva.Rect>((node) => selectedObjectIds.includes(node.id()));
 
         transformer.nodes(selectedNodes);
         transformer.getLayer()?.batchDraw();
-    }, [selectedIds]);
+    }, [selectedObjectIds]);
 
     // Click handler for stage
     const handleStageClick = (e) => {
@@ -41,7 +45,7 @@ const Canvas = () => {
 
         // If click on empty area - remove all selections
         if (e.target === e.target.getStage()) {
-            setSelectedIds([]);
+            dispatch(setSelectedObjectIds([]))
             return;
         }
 
@@ -49,19 +53,19 @@ const Canvas = () => {
 
         // Do we pressed shift or ctrl?
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-        const isSelected = selectedIds.includes(clickedId);
+        const isSelected = selectedObjectIds.includes(clickedId);
 
         if (!metaPressed && !isSelected) {
             // If no key pressed and the node is not selected
             // select just one
-            setSelectedIds([clickedId]);
+            dispatch(setSelectedObjectIds([clickedId]))
         } else if (metaPressed && isSelected) {
             // If we pressed keys and node was selected
             // we need to remove it from selection
-            setSelectedIds(selectedIds.filter(id => id !== clickedId));
+            dispatch(setSelectedObjectIds(selectedObjectIds.filter(id => id !== clickedId)))
         } else if (metaPressed && !isSelected) {
             // Add the node into selection
-            setSelectedIds([...selectedIds, clickedId]);
+            dispatch(setSelectedObjectIds([...selectedObjectIds, clickedId]))
         }
     };
 
@@ -150,7 +154,7 @@ const Canvas = () => {
         });
 
         const ids = shapes.map(shape => shape.id()).filter(Boolean);
-        setSelectedIds(ids);
+        dispatch(setSelectedObjectIds(ids))
 
         setTimeout(() => {
             setSelectionRectangle({

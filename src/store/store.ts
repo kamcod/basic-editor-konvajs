@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import rectanglesReducer from './rectanglesSlice';
+import canvasSlice from "@/store/reducers/canvasSlice";
 
 export const store = configureStore({
     reducer: {
-        rectangles: rectanglesReducer,
+        canvas: canvasSlice
     },
 });
 
