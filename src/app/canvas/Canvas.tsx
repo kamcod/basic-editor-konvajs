@@ -35,40 +35,6 @@ const Canvas = () => {
         transformer.getLayer()?.batchDraw();
     }, [selectedObjectIds]);
 
-    // Click handler for stage
-    const handleStageClick = (e) => {
-        if (isDragging) {
-            setIsDragging(false);
-            setDragStartPos(null);
-            return;
-        }
-
-        // If click on empty area - remove all selections
-        if (e.target === e.target.getStage()) {
-            dispatch(setSelectedObjectIds([]))
-            return;
-        }
-
-        const clickedId = e.target.id();
-
-        // Do we pressed shift or ctrl?
-        const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-        const isSelected = selectedObjectIds.includes(clickedId);
-
-        if (!metaPressed && !isSelected) {
-            // If no key pressed and the node is not selected
-            // select just one
-            dispatch(setSelectedObjectIds([clickedId]))
-        } else if (metaPressed && isSelected) {
-            // If we pressed keys and node was selected
-            // we need to remove it from selection
-            dispatch(setSelectedObjectIds(selectedObjectIds.filter(id => id !== clickedId)))
-        } else if (metaPressed && !isSelected) {
-            // Add the node into selection
-            dispatch(setSelectedObjectIds([...selectedObjectIds, clickedId]))
-        }
-    };
-
     const handleMouseDown = (e) => {
 
         if (e.target !== e.target.getStage()) {
@@ -163,6 +129,40 @@ const Canvas = () => {
             });
         });
     }
+
+    // Click handler for stage
+    const handleStageClick = (e) => {
+        if (isDragging) {
+            setIsDragging(false);
+            setDragStartPos(null);
+            return;
+        }
+
+        // If click on empty area - remove all selections
+        if (e.target === e.target.getStage()) {
+            dispatch(setSelectedObjectIds([]))
+            return;
+        }
+
+        const clickedId = e.target.id();
+
+        // Do we pressed shift or ctrl?
+        const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
+        const isSelected = selectedObjectIds.includes(clickedId);
+
+        if (!metaPressed && !isSelected) {
+            // If no key pressed and the node is not selected
+            // select just one
+            dispatch(setSelectedObjectIds([clickedId]))
+        } else if (metaPressed && isSelected) {
+            // If we pressed keys and node was selected
+            // we need to remove it from selection
+            dispatch(setSelectedObjectIds(selectedObjectIds.filter(id => id !== clickedId)))
+        } else if (metaPressed && !isSelected) {
+            // Add the node into selection
+            dispatch(setSelectedObjectIds([...selectedObjectIds, clickedId]))
+        }
+    };
 
     return (
         <Stage
