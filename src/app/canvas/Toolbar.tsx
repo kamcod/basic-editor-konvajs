@@ -1,5 +1,5 @@
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {setShapes} from "@/store/reducers/canvasSlice";
+import {addShape, setShapes} from "@/store/reducers/canvasSlice";
 
 export default function Toolbar(){
     const dispatch = useAppDispatch();
@@ -15,24 +15,54 @@ export default function Toolbar(){
             fill: "#4a90e2",
             rotation: 0
         };
-        dispatch(setShapes([
-            ...shapes,
-            {
-                type: "rectangle",
-                attributes: newRect
-            }
-        ]));
+        dispatch(addShape({
+            type: "rectangle",
+            attributes: newRect
+        }));
     }
+
+    const addCircle = () => {
+        const newCircle = {
+            id: `circle-${Date.now()}`,
+            x: Math.random() * 400,
+            y: Math.random() * 400,
+            radius: 50,
+            fill: "#f08a5d",
+        };
+        dispatch(addShape({
+            type: "circle",
+            attributes: newCircle
+        }));
+    }
+
+    const addArrow = () => {
+        const newArrow = {
+            id: `arrow-${Date.now()}`,
+            x: Math.random() * 400,
+            y: Math.random() * 400,
+            points: [0, 0, 100, 100],
+            pointerLength: 8,
+            pointerWidth: 8,
+            fill: "black",
+            stroke: "black",
+            strokeWidth: 1
+        };
+        dispatch(addShape({
+            type: "arrow",
+            attributes: newArrow
+        }));
+    }
+
     const handleAddShapes = (shape: string) => {
         switch (shape) {
             case 'rectangle':
                 addRectangle();
                 break;
             case 'circle':
-                addRectangle();
+                addCircle();
                 break;
             case 'arrow':
-                addRectangle();
+                addArrow();
                 break;
             default:
                 addRectangle();

@@ -1,6 +1,5 @@
 import {Rect, Circle, Arrow} from "react-konva";
 import {useAppSelector} from "@/store/hooks";
-import {useEffect} from "react";
 
 const Rectangle = ( { data }) => {
     const { id, name, x, y, width, height, fill, rotation, draggable } = data;
@@ -60,9 +59,6 @@ const renderShapes = (shape, index) => {
 
 export default function Shapes(){
     const { shapes } = useAppSelector(state => state.canvas);
-    useEffect(() => {
-        console.log('shapes data....', shapes);
-    }, [shapes])
     return (
         <>
             {shapes.map((shape, index) => (

@@ -55,6 +55,9 @@ const canvasSlice = createSlice({
     initialState,
     reducers: {
         setShapes: (state, action: PayloadAction<ShapeI[]>) => {
+            state.shapes = action.payload;
+        },
+        addShape: (state, action: PayloadAction<ShapeI>) => {
             state.shapes.push(action.payload);
         },
         setSelectedObjectIds: (state, action: PayloadAction<string[]>) => {
@@ -63,5 +66,5 @@ const canvasSlice = createSlice({
     },
 });
 
-export const { setShapes, setSelectedObjectIds } = canvasSlice.actions;
+export const { setShapes, addShape, setSelectedObjectIds } = canvasSlice.actions;
 export default canvasSlice.reducer;
