@@ -60,11 +60,15 @@ const canvasSlice = createSlice({
         addShape: (state, action: PayloadAction<ShapeI>) => {
             state.shapes.push(action.payload);
         },
+        clearShapes: (state) => {
+            state.shapes = [];
+            state.selectedObjectIds = [];
+        },
         setSelectedObjectIds: (state, action: PayloadAction<string[]>) => {
             state.selectedObjectIds = action.payload;
         },
     },
 });
 
-export const { setShapes, addShape, setSelectedObjectIds } = canvasSlice.actions;
+export const { setShapes, addShape, clearShapes, setSelectedObjectIds } = canvasSlice.actions;
 export default canvasSlice.reducer;
