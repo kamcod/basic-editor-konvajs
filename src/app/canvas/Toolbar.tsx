@@ -1,9 +1,8 @@
-import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {addShape, setShapes} from "@/store/reducers/canvasSlice";
+import {useAppDispatch} from "@/store/hooks";
+import {addShape} from "@/store/reducers/canvasSlice";
 
 export default function Toolbar(){
     const dispatch = useAppDispatch();
-    const { shapes } = useAppSelector(state => state.canvas);
 
     const addRectangle = () => {
         const newRect = {
