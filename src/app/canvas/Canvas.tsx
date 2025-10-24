@@ -43,6 +43,15 @@ const Canvas = () => {
         if (!layer || !transformer) return;
 
         const stage = layer.getStage();
+
+        // First, remove all group drag listeners from ALL nodes
+        const allNodes = stage.find((node) => node.id());
+        allNodes.forEach((node) => {
+            node.off('dragmove.group');
+            node.off('dragend.group');
+            node.off('dragstart.group');
+        });
+
         const selectedNodes = stage
             .find((node) => selectedObjectIds.includes(node.id()));
 
@@ -83,11 +92,7 @@ const Canvas = () => {
         selectedNodes.forEach((node) => {
             node.draggable(true);
 
-            // Remove old listeners to prevent duplicates
-            node.off('dragmove.group');
-            node.off('dragend.group');
-            node.off('dragstart.group');
-
+            // Add group drag functionality only if multiple items are selected
             if (selectedObjectIds.length > 1) {
                 node.on('dragstart.group', function() {
                     // Initialize lastPos when drag starts
