@@ -49,6 +49,38 @@ const Canvas = () => {
         // Attach nodes to transformer
         transformer.nodes(selectedNodes);
 
+        // Remove old transformer listeners
+        transformer.off('transform.overlay');
+        transformer.off('transformed.overlay');
+
+        // Update overlay position function
+        const updateOverlayPosition = () => {
+            if (selectedObjectIds.length) {
+                const cornerOffset = transformer.anchorSize();
+                const rotateHandleOffset = transformer.rotateAnchorOffset() + cornerOffset;
+                const box = transformer.getClientRect();
+                setOverlayRect({
+                    visible: true,
+                    x: box.x + cornerOffset/2,
+                    y: box.y + rotateHandleOffset - cornerOffset/2,
+                    width: box.width - cornerOffset,
+                    height: box.height - rotateHandleOffset,
+                });
+            } else {
+                setOverlayRect({
+                    visible: false,
+                    x: 0,
+                    y: 0,
+                    width: 0,
+                    height: 0,
+                });
+            }
+        };
+
+        // Listen to transformer events to update overlay
+        transformer.on('transform.overlay', updateOverlayPosition);
+        transformer.on('transformed.overlay', updateOverlayPosition);
+
         // Enable dragging on all selected nodes
         selectedNodes.forEach((node) => {
             node.draggable(true);
@@ -58,7 +90,6 @@ const Canvas = () => {
             node.off('dragend.group');
             node.off('dragstart.group');
 
-            // Add group drag functionality
             if (selectedObjectIds.length > 1) {
                 node.on('dragstart.group', function() {
                     // Initialize lastPos when drag starts
@@ -93,23 +124,14 @@ const Canvas = () => {
                     // Clean up and update transformer
                     this.setAttr('lastPos', null);
                     transformer.forceUpdate();
+                    updateOverlayPosition();
                     layer.batchDraw();
                 });
             }
         });
 
-        // Update overlay rectangle position
-
-        const cornerOffset = transformer.anchorSize();
-        const rotateHandleOffset = transformer.rotateAnchorOffset() + cornerOffset;
-        const box = transformer.getClientRect();
-        setOverlayRect({
-            visible: true,
-            x: box.x + cornerOffset/2,
-            y: box.y + rotateHandleOffset - cornerOffset/2,
-            width: box.width - cornerOffset,
-            height: box.height - rotateHandleOffset,
-        });
+        // Initial overlay position update
+        updateOverlayPosition();
 
         transformer.getLayer()?.batchDraw();
     }, [selectedObjectIds]);
@@ -301,20 +323,25 @@ const Canvas = () => {
         });
 
         // Update overlay position to match new transformer bounds
-
         const cornerOffset = transformer.anchorSize();
         const rotateHandleOffset = transformer.rotateAnchorOffset() + cornerOffset;
         const box = transformer.getClientRect();
+
+        const newX = box.x + cornerOffset/2;
+        const newY = box.y + rotateHandleOffset - cornerOffset/2;
+        const newWidth = box.width - cornerOffset;
+        const newHeight = box.height - rotateHandleOffset;
+
         setOverlayRect({
             visible: true,
-            x: box.x + cornerOffset/2,
-            y: box.y + rotateHandleOffset - cornerOffset/2,
-            width: box.width - cornerOffset,
-            height: box.height - rotateHandleOffset,
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
         });
 
-        // Reset overlay rect position
-        e.target.position({ x: box.x, y: box.y });
+        // Reset overlay rect position to match the new calculated position
+        e.target.position({ x: newX, y: newY });
 
         transformer.forceUpdate();
         layer.batchDraw();
@@ -365,7 +392,7 @@ const Canvas = () => {
                         y={overlayRect.y}
                         width={overlayRect.width}
                         height={overlayRect.height}
-                        fill="transparent"
+                        fill="rgba(0,255,0,0.5)"
                         draggable
                         onDragStart={handleOverlayDragStart}
                         onDragMove={handleOverlayDragMove}
