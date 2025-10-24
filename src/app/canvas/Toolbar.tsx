@@ -12,7 +12,8 @@ export default function Toolbar(){
             width: 100,
             height: 60,
             fill: "#4a90e2",
-            rotation: 0
+            rotation: 0,
+            draggable: true
         };
         dispatch(addShape({
             type: "rectangle",
@@ -27,6 +28,9 @@ export default function Toolbar(){
             y: Math.random() * 400,
             radius: 50,
             fill: "#f08a5d",
+            stroke: "#f08a5d",
+            strokeWidth: 0,
+            draggable: true
         };
         dispatch(addShape({
             type: "circle",
@@ -44,7 +48,8 @@ export default function Toolbar(){
             pointerWidth: 8,
             fill: "black",
             stroke: "black",
-            strokeWidth: 1
+            strokeWidth: 1,
+            draggable: true
         };
         dispatch(addShape({
             type: "arrow",

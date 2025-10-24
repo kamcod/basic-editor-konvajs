@@ -12,6 +12,7 @@ const DUMMY_SHAPES: ShapeI[] = [
             height: 60,
             fill: "#4a90e2",
             rotation: 0,
+            draggable: true
         }
     },
     {
@@ -21,7 +22,10 @@ const DUMMY_SHAPES: ShapeI[] = [
             x: 300,
             y: 500,
             radius: 100,
-            fill: "#4a90e2"
+            fill: "#4a90e2",
+            stroke: "#4a90e2",
+            strokeWidth: 0,
+            draggable: true
         }
     },
     {
@@ -35,7 +39,8 @@ const DUMMY_SHAPES: ShapeI[] = [
             pointerWidth: 10,
             fill: "black",
             stroke: "black",
-            strokeWidth: 1
+            strokeWidth: 1,
+            draggable: true
         }
     }
 ]

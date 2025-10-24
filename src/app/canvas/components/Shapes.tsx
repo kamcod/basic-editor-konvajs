@@ -1,7 +1,8 @@
 import {Rect, Circle, Arrow} from "react-konva";
 import {useAppSelector} from "@/store/hooks";
+import {BasicObjectAttributes, CircleI, ArrowI, ShapeI} from "@/app/types/canvas.dto";
 
-const Rectangle = ( { data }) => {
+const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
     const { id, name, x, y, width, height, fill, rotation, draggable } = data;
     return <Rect
         id={id}
@@ -16,7 +17,7 @@ const Rectangle = ( { data }) => {
     />
 }
 
-const AddCircle = ( { data }) => {
+const AddCircle = ( { data }: { data: CircleI }) => {
     const { id, x, y, radius, stroke, strokeWidth, fill, draggable } = data;
     return <Circle
         id={id}
@@ -29,7 +30,7 @@ const AddCircle = ( { data }) => {
         draggable={draggable ?? true}
     />
 }
-const AddArrow = ( { data }) => {
+const AddArrow = ( { data }: { data: ArrowI }) => {
     const { id, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth, draggable } = data;
     return <Arrow
         id={id}
@@ -44,16 +45,16 @@ const AddArrow = ( { data }) => {
         draggable={draggable ?? true}
     />
 }
-const renderShapes = (shape, index) => {
+const renderShapes = (shape: ShapeI, index: number) => {
     switch (shape.type) {
         case 'rectangle':
-            return <Rectangle key={index} data={shape.attributes} />
+            return <Rectangle key={index} data={shape.attributes as BasicObjectAttributes} />
         case 'circle':
-            return <AddCircle key={index} data={shape.attributes} />
+            return <AddCircle key={index} data={shape.attributes as CircleI} />
         case 'arrow':
-            return <AddArrow key={index} data={shape.attributes} />
+            return <AddArrow key={index} data={shape.attributes as ArrowI} />
         default:
-            return <Rectangle key={index} data={shape.attributes} />
+            return <Rectangle key={index} data={shape.attributes as BasicObjectAttributes} />
     }
 };
 

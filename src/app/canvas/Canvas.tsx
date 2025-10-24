@@ -45,15 +45,15 @@ const Canvas = () => {
         const stage = layer.getStage();
 
         // First, remove all group drag listeners from ALL nodes
-        const allNodes = stage.find((node) => node.id());
-        allNodes.forEach((node) => {
+        const allNodes = stage.find((node: Konva.Node) => node.id());
+        allNodes.forEach((node: Konva.Node) => {
             node.off('dragmove.group');
             node.off('dragend.group');
             node.off('dragstart.group');
         });
 
         const selectedNodes = stage
-            .find((node) => selectedObjectIds.includes(node.id()));
+            .find((node: Konva.Node) => selectedObjectIds.includes(node.id()));
 
         // Attach nodes to transformer
         transformer.nodes(selectedNodes);
@@ -89,18 +89,18 @@ const Canvas = () => {
         transformer.on('transform.overlay', updateOverlayPosition);
 
         // Enable dragging on all selected nodes
-        selectedNodes.forEach((node) => {
+        selectedNodes.forEach((node: Konva.Node) => {
             node.draggable(true);
 
             // Add group drag functionality only if multiple items are selected
             if (selectedObjectIds.length > 1) {
-                node.on('dragstart.group', function() {
+                node.on('dragstart.group', function(this: Konva.Node) {
                     // Initialize lastPos when drag starts
                     const pos = this.position();
                     this.setAttr('lastPos', { x: pos.x, y: pos.y });
                 });
 
-                node.on('dragmove.group', function() {
+                node.on('dragmove.group', function(this: Konva.Node) {
                     // Get the current node that's being dragged
                     // eslint-disable-next-line @typescript-eslint/no-this-alias
                     const draggedNode = this;
@@ -112,7 +112,7 @@ const Canvas = () => {
                     const dy = pos.y - lastPos.y;
 
                     // Move all other selected nodes by the same delta
-                    selectedNodes.forEach((otherNode) => {
+                    selectedNodes.forEach((otherNode: Konva.Node) => {
                         if (otherNode !== draggedNode) {
                             otherNode.move({ x: dx, y: dy });
                         }
@@ -124,7 +124,7 @@ const Canvas = () => {
                     layer.batchDraw();
                 });
 
-                node.on('dragend.group', function() {
+                node.on('dragend.group', function(this: Konva.Node) {
                     // Clean up and update transformer
                     this.setAttr('lastPos', null);
                     transformer.forceUpdate();
@@ -140,13 +140,13 @@ const Canvas = () => {
         transformer.getLayer()?.batchDraw();
     }, [selectedObjectIds]);
 
-    const handleMouseDown = (e) => {
+    const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
 
         if (e.target !== e.target.getStage()) {
             return;
         }
 
-        const pos = e.target.getStage().getPointerPosition();
+        const pos = e.target.getStage()!.getPointerPosition()!;
         setDragStartPos(pos);
         setIsDragging(false);
 
@@ -160,13 +160,13 @@ const Canvas = () => {
         });
     };
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
         if (!isSelecting.current) {
             return;
         }
         if (!dragStartPos) return;
 
-        const pos = e.target.getStage().getPointerPosition();
+        const pos = e.target.getStage()!.getPointerPosition()!;
         const dx = Math.abs(pos.x - dragStartPos.x);
         const dy = Math.abs(pos.y - dragStartPos.y);
 
@@ -206,7 +206,7 @@ const Canvas = () => {
 
         // Find all shapes that intersect with selection rectangle
         const allNodes = layer.getChildren();
-        const shapes = allNodes.filter((node) => {
+        const shapes = allNodes.filter((node: Konva.Node) => {
             // Skip transformer and selection rectangle itself
             const className = node.getClassName();
             if (className === 'Transformer' || !node.id()) {
@@ -224,7 +224,7 @@ const Canvas = () => {
             );
         });
 
-        const ids = shapes.map(shape => shape.id()).filter(Boolean);
+        const ids = shapes.map((shape: Konva.Node) => shape.id()).filter(Boolean);
         dispatch(setSelectedObjectIds(ids))
 
         setTimeout(() => {
@@ -236,7 +236,7 @@ const Canvas = () => {
     }
 
     // Click handler for stage
-    const handleStageClick = (e) => {
+    const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
         if (isDragging) {
             setIsDragging(false);
             setDragStartPos(null);
@@ -279,10 +279,10 @@ const Canvas = () => {
         if (!layer) return;
 
         const stage = layer.getStage();
-        const selectedNodes = stage.find((node) => selectedObjectIds.includes(node.id()));
+        const selectedNodes = stage.find((node: Konva.Node) => selectedObjectIds.includes(node.id()));
 
         // Store initial positions of all selected nodes
-        selectedNodes.forEach((node) => {
+        selectedNodes.forEach((node: Konva.Node) => {
             node.setAttr('initialPos', { x: node.x(), y: node.y() });
         });
     };
@@ -293,14 +293,14 @@ const Canvas = () => {
         if (!layer) return;
 
         const stage = layer.getStage();
-        const selectedNodes = stage.find((node) => selectedObjectIds.includes(node.id()));
+        const selectedNodes = stage.find((node: Konva.Node) => selectedObjectIds.includes(node.id()));
 
         // Calculate delta from initial overlay position
         const dx = overlay.x() - overlayRect.x;
         const dy = overlay.y() - overlayRect.y;
 
         // Move all selected nodes by the same delta from their initial positions
-        selectedNodes.forEach((node) => {
+        selectedNodes.forEach((node: Konva.Node) => {
             const initialPos = node.getAttr('initialPos');
             if (initialPos) {
                 node.position({
@@ -319,10 +319,10 @@ const Canvas = () => {
         if (!layer || !transformer) return;
 
         const stage = layer.getStage();
-        const selectedNodes = stage.find((node) => selectedObjectIds.includes(node.id()));
+        const selectedNodes = stage.find((node: Konva.Node) => selectedObjectIds.includes(node.id()));
 
         // Clean up initial positions
-        selectedNodes.forEach((node) => {
+        selectedNodes.forEach((node: Konva.Node) => {
             node.setAttr('initialPos', null);
         });
 
