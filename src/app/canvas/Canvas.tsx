@@ -51,7 +51,6 @@ const Canvas = () => {
 
         // Remove old transformer listeners
         transformer.off('transform.overlay');
-        transformer.off('transformed.overlay');
 
         // Update overlay position function
         const updateOverlayPosition = () => {
@@ -79,7 +78,6 @@ const Canvas = () => {
 
         // Listen to transformer events to update overlay
         transformer.on('transform.overlay', updateOverlayPosition);
-        transformer.on('transformed.overlay', updateOverlayPosition);
 
         // Enable dragging on all selected nodes
         selectedNodes.forEach((node) => {
@@ -99,6 +97,7 @@ const Canvas = () => {
 
                 node.on('dragmove.group', function() {
                     // Get the current node that's being dragged
+                    // eslint-disable-next-line @typescript-eslint/no-this-alias
                     const draggedNode = this;
                     const pos = draggedNode.position();
 
