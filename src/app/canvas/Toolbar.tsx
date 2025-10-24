@@ -31,7 +31,7 @@ export default function Toolbar(){
         }
     }
     return (
-        <div className="min-h-screen w-30 flex flex-col gap-2 items-center py-6 border-r border-gray-200">
+        <div className="h-full w-30 flex flex-col gap-2 items-center py-6 border-r border-gray-200">
             <div className="font-semibold underline">Shapes</div>
             <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={() => handleAddShapes('rectangle')}>Rectangle</button>
             <button className="text-sm p-1 border border-gray-300 rounded-md" onClick={() => handleAddShapes('circle')}>Circle</button>

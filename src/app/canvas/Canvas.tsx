@@ -351,8 +351,8 @@ const Canvas = () => {
         <Stage
             ref={stageRef}
             width={window.innerWidth * 0.8}
-            height={window.innerHeight * 0.9}
-            style={{background: 'white', border: '1px solid gray'}}
+            height={window.innerHeight * 0.7}
+            style={{background: 'white'}}
             onClick={handleStageClick}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
