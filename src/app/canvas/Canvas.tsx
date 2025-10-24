@@ -367,13 +367,22 @@ const Canvas = () => {
                         y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
                         width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
                         height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                        fill="rgba(0,0,255,0.5)"
+                        fill="rgba(59, 130, 246, 0.1)"
+                        stroke="rgba(59, 130, 246, 0.4)"
+                        strokeWidth={1}
+                        dash={[4, 4]}
                         listening={false}
                     />
                 )}
 
                 <Transformer
                     ref={transformerRef}
+                    borderStroke="#3b82f6"
+                    borderStrokeWidth={2}
+                    anchorStroke="#3b82f6"
+                    anchorFill="#ffffff"
+                    anchorSize={8}
+                    anchorCornerRadius={2}
                     boundBoxFunc={(oldBox, newBox) => {
                         // Limit resize
                         if (newBox.width < 5 || newBox.height < 5) {
@@ -392,7 +401,7 @@ const Canvas = () => {
                         y={overlayRect.y}
                         width={overlayRect.width}
                         height={overlayRect.height}
-                        fill="rgba(0,255,0,0.5)"
+                        fill="transparent"
                         draggable
                         onDragStart={handleOverlayDragStart}
                         onDragMove={handleOverlayDragMove}
