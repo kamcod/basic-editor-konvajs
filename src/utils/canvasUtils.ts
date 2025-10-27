@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { ShapeI } from "@/app/types/canvas.dto";
+import {ShapeI, ShapeType} from "@/app/types/canvas.dto";
 
 export const extractCanvasJSON = (stage: Konva.Stage | null): { shapes: ShapeI[], selectedObjectIds: string[] } | null => {
     if (!stage) {
@@ -35,78 +35,11 @@ export const extractCanvasJSON = (stage: Konva.Stage | null): { shapes: ShapeI[]
         }
 
         // Extract shape data based on type
-        if (className === 'Rect') {
-            const rect = node as Konva.Rect;
-            const fill = rect.fill();
-            shapes.push({
-                type: 'rectangle',
-                attributes: {
-                    id: rect.id(),
-                    name: rect.name(),
-                    x: rect.x(),
-                    y: rect.y(),
-                    width: rect.width(),
-                    height: rect.height(),
-                    fill: typeof fill === 'string' ? fill : '#4a90e2',
-                    rotation: rect.rotation(),
-                    draggable: rect.draggable(),
-                    scaleX: rect.scaleX(),
-                    scaleY: rect.scaleY(),
-                    offsetX: rect.offsetX(),
-                    offsetY: rect.offsetY(),
-                    opacity: rect.opacity(),
-                }
-            });
-        } else if (className === 'Circle') {
-            const circle = node as Konva.Circle;
-            const fill = circle.fill();
-            const stroke = circle.stroke();
-            shapes.push({
-                type: 'circle',
-                attributes: {
-                    id: circle.id(),
-                    name: circle.name(),
-                    x: circle.x(),
-                    y: circle.y(),
-                    radius: circle.radius(),
-                    fill: typeof fill === 'string' ? fill : '#f08a5d',
-                    stroke: typeof stroke === 'string' ? stroke : '#f08a5d',
-                    strokeWidth: circle.strokeWidth() || 0,
-                    draggable: circle.draggable(),
-                    scaleX: circle.scaleX(),
-                    scaleY: circle.scaleY(),
-                    offsetX: circle.offsetX(),
-                    offsetY: circle.offsetY(),
-                    opacity: circle.opacity(),
-                }
-            });
-        } else if (className === 'Arrow') {
-            const arrow = node as Konva.Arrow;
-            const fill = arrow.fill();
-            const stroke = arrow.stroke();
-            shapes.push({
-                type: 'arrow',
-                attributes: {
-                    id: arrow.id(),
-                    name: arrow.name(),
-                    x: arrow.x(),
-                    y: arrow.y(),
-                    points: arrow.points(),
-                    pointerLength: arrow.pointerLength(),
-                    pointerWidth: arrow.pointerWidth(),
-                    fill: typeof fill === 'string' ? fill : 'black',
-                    stroke: typeof stroke === 'string' ? stroke : 'black',
-                    strokeWidth: arrow.strokeWidth() || 1,
-                    draggable: arrow.draggable(),
-                    rotation: arrow.rotation(),
-                    scaleX: arrow.scaleX(),
-                    scaleY: arrow.scaleY(),
-                    offsetX: arrow.offsetX(),
-                    offsetY: arrow.offsetY(),
-                    opacity: arrow.opacity(),
-                }
-            });
-        }
+        const shapeType = className as ShapeType;
+        shapes.push({
+            type: shapeType,
+            attributes: node.attrs
+        });
     });
 
     return { shapes, selectedObjectIds };

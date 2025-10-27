@@ -3,7 +3,7 @@ import {ShapeI} from "@/app/types/canvas.dto";
 
 const DUMMY_SHAPES: ShapeI[] = [
     {
-        type: 'rectangle',
+        type: 'Rect',
         attributes: {
             id: `rect-${Date.now()}`,
             x: 100,
@@ -16,7 +16,7 @@ const DUMMY_SHAPES: ShapeI[] = [
         }
     },
     {
-        type: 'circle',
+        type: 'Circle',
         attributes: {
             id: `circle-${Date.now()}`,
             x: 300,
@@ -29,7 +29,7 @@ const DUMMY_SHAPES: ShapeI[] = [
         }
     },
     {
-        type: 'arrow',
+        type: 'Arrow',
         attributes: {
             id: `arrow-${Date.now()}`,
             x: 400,

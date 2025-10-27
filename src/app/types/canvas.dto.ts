@@ -29,7 +29,8 @@ export interface ArrowI extends BasicObjectAttributes {
     strokeWidth: number;
 }
 
+export type ShapeType = 'Rect' | 'Circle' | 'Arrow'
 export interface ShapeI {
-    type: 'rectangle' | 'circle' | 'arrow';
+    type: ShapeType;
     attributes: BasicObjectAttributes | CircleI | ArrowI;
 }

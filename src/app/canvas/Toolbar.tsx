@@ -19,7 +19,7 @@ export default function Toolbar(){
             draggable: true
         };
         dispatch(addShape({
-            type: "rectangle",
+            type: "Rect",
             attributes: newRect
         }));
 
@@ -41,7 +41,7 @@ export default function Toolbar(){
             draggable: true
         };
         dispatch(addShape({
-            type: "circle",
+            type: "Circle",
             attributes: newCircle
         }));
 
@@ -65,7 +65,7 @@ export default function Toolbar(){
             draggable: true
         };
         dispatch(addShape({
-            type: "arrow",
+            type: "Arrow",
             attributes: newArrow
         }));
 
@@ -77,13 +77,13 @@ export default function Toolbar(){
 
     const handleAddShapes = (shape: string) => {
         switch (shape) {
-            case 'rectangle':
+            case 'Rect':
                 addRectangle();
                 break;
-            case 'circle':
+            case 'Circle':
                 addCircle();
                 break;
-            case 'arrow':
+            case 'Arrow':
                 addArrow();
                 break;
             default:
@@ -118,7 +118,7 @@ export default function Toolbar(){
                 </h3>
                 <div className="flex flex-col gap-2">
                     <button
-                        onClick={() => handleAddShapes('rectangle')}
+                        onClick={() => handleAddShapes('Rect')}
                         className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,7 +128,7 @@ export default function Toolbar(){
                     </button>
 
                     <button
-                        onClick={() => handleAddShapes('circle')}
+                        onClick={() => handleAddShapes('Circle')}
                         className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +138,7 @@ export default function Toolbar(){
                     </button>
 
                     <button
-                        onClick={() => handleAddShapes('arrow')}
+                        onClick={() => handleAddShapes('Arrow')}
                         className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

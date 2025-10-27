@@ -104,11 +104,11 @@ const AddArrow = ( { data }: { data: ArrowI }) => {
 }
 const renderShapes = (shape: ShapeI, index: number) => {
     switch (shape.type) {
-        case 'rectangle':
+        case 'Rect':
             return <Rectangle key={index} data={shape.attributes as BasicObjectAttributes} />
-        case 'circle':
+        case 'Circle':
             return <AddCircle key={index} data={shape.attributes as CircleI} />
-        case 'arrow':
+        case 'Arrow':
             return <AddArrow key={index} data={shape.attributes as ArrowI} />
         default:
             return <Rectangle key={index} data={shape.attributes as BasicObjectAttributes} />
