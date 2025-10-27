@@ -1,41 +1,32 @@
 export interface BasicObjectAttributes {
     id: string;
     name?: string;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     x: number;
     y: number;
     rotation?: number;
     draggable?: boolean;
     fill?: string;
+    scaleX?: number;
+    scaleY?: number;
+    offsetX?: number;
+    offsetY?: number;
+    opacity?: number;
 }
 
-export interface CircleI {
-    id: string;
-    name?: string;
-    x: number;
-    y: number;
+export interface CircleI extends BasicObjectAttributes{
     radius: number;
-    fill: string;
     stroke?: string;
     strokeWidth?: number;
-    width?: number;
-    height?: number;
-    draggable?: boolean;
 }
 
-export interface ArrowI {
-    id: string;
-    name?: string;
-    x: number;
-    y: number;
+export interface ArrowI extends BasicObjectAttributes {
     points: number[];
     pointerLength: number;
     pointerWidth: number;
-    fill: string;
     stroke: string;
     strokeWidth: number;
-    draggable?: boolean;
 }
 
 export interface ShapeI {

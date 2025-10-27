@@ -1,9 +1,22 @@
+import React from "react";
 import {Rect, Circle, Arrow} from "react-konva";
 import {useAppSelector} from "@/store/hooks";
 import {BasicObjectAttributes, CircleI, ArrowI, ShapeI} from "@/app/types/canvas.dto";
+import { useCanvas } from "@/contexts/CanvasContext";
+import { logCanvasJSON } from "@/utils/canvasUtils";
 
 const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
-    const { id, name, x, y, width, height, fill, rotation, draggable } = data;
+    const { stageRef } = useCanvas();
+    const { id, name, x, y, width, height, fill, rotation, draggable, scaleX, scaleY, offsetX, offsetY, opacity } = data;
+
+    const handleDragEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
+    const handleTransformEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
     return <Rect
         id={id}
         x={x}
@@ -14,13 +27,31 @@ const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
         name={name}
         rotation={rotation}
         draggable={draggable ?? true}
+        scaleX={scaleX ?? 1}
+        scaleY={scaleY ?? 1}
+        offsetX={offsetX ?? 0}
+        offsetY={offsetY ?? 0}
+        opacity={opacity ?? 1}
+        onDragEnd={handleDragEnd}
+        onTransformEnd={handleTransformEnd}
     />
 }
 
 const AddCircle = ( { data }: { data: CircleI }) => {
-    const { id, x, y, radius, stroke, strokeWidth, fill, draggable } = data;
+    const { stageRef } = useCanvas();
+    const { id, name, x, y, radius, stroke, strokeWidth, fill, draggable, scaleX, scaleY, offsetX, offsetY, opacity } = data;
+
+    const handleDragEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
+    const handleTransformEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
     return <Circle
         id={id}
+        name={name}
         x={x}
         y={y}
         radius={radius}
@@ -28,12 +59,30 @@ const AddCircle = ( { data }: { data: CircleI }) => {
         stroke={stroke}
         strokeWidth={strokeWidth}
         draggable={draggable ?? true}
+        scaleX={scaleX ?? 1}
+        scaleY={scaleY ?? 1}
+        offsetX={offsetX ?? 0}
+        offsetY={offsetY ?? 0}
+        opacity={opacity ?? 1}
+        onDragEnd={handleDragEnd}
+        onTransformEnd={handleTransformEnd}
     />
 }
 const AddArrow = ( { data }: { data: ArrowI }) => {
-    const { id, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth, draggable } = data;
+    const { stageRef } = useCanvas();
+    const { id, name, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth, draggable, rotation, scaleX, scaleY, offsetX, offsetY, opacity } = data;
+
+    const handleDragEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
+    const handleTransformEnd = () => {
+        logCanvasJSON(stageRef.current);
+    };
+
     return <Arrow
         id={id}
+        name={name}
         x={x}
         y={y}
         points={points}
@@ -43,6 +92,14 @@ const AddArrow = ( { data }: { data: ArrowI }) => {
         stroke={stroke}
         strokeWidth={strokeWidth}
         draggable={draggable ?? true}
+        rotation={rotation ?? 0}
+        scaleX={scaleX ?? 1}
+        scaleY={scaleY ?? 1}
+        offsetX={offsetX ?? 0}
+        offsetY={offsetY ?? 0}
+        opacity={opacity ?? 1}
+        onDragEnd={handleDragEnd}
+        onTransformEnd={handleTransformEnd}
     />
 }
 const renderShapes = (shape: ShapeI, index: number) => {

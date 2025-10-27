@@ -4,6 +4,7 @@ import {useRef, useState, useEffect} from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setSelectedObjectIds} from "@/store/reducers/canvasSlice";
+import { logCanvasJSON } from "@/utils/canvasUtils";
 import Konva from "konva";
 
 const Canvas = () => {
@@ -130,6 +131,10 @@ const Canvas = () => {
                     transformer.forceUpdate();
                     updateOverlayPosition();
                     layer.batchDraw();
+
+                    // Log canvas state after group drag
+                    const stage = layer.getStage();
+                    logCanvasJSON(stage);
                 });
             }
         });
@@ -349,6 +354,9 @@ const Canvas = () => {
 
         transformer.forceUpdate();
         layer.batchDraw();
+
+        // Log canvas state after overlay drag
+        logCanvasJSON(stage);
     };
 
     return (

@@ -1,8 +1,11 @@
 import {useAppDispatch} from "@/store/hooks";
 import {addShape, clearShapes} from "@/store/reducers/canvasSlice";
+import { useCanvas } from "@/contexts/CanvasContext";
+import { logCanvasJSON } from "@/utils/canvasUtils";
 
 export default function Toolbar(){
     const dispatch = useAppDispatch();
+    const { stageRef } = useCanvas();
 
     const addRectangle = () => {
         const newRect = {
@@ -19,6 +22,11 @@ export default function Toolbar(){
             type: "rectangle",
             attributes: newRect
         }));
+
+        // Log canvas state after adding shape
+        setTimeout(() => {
+            logCanvasJSON(stageRef.current);
+        }, 0);
     }
 
     const addCircle = () => {
@@ -36,6 +44,11 @@ export default function Toolbar(){
             type: "circle",
             attributes: newCircle
         }));
+
+        // Log canvas state after adding shape
+        setTimeout(() => {
+            logCanvasJSON(stageRef.current);
+        }, 0);
     }
 
     const addArrow = () => {
@@ -55,6 +68,11 @@ export default function Toolbar(){
             type: "arrow",
             attributes: newArrow
         }));
+
+        // Log canvas state after adding shape
+        setTimeout(() => {
+            logCanvasJSON(stageRef.current);
+        }, 0);
     }
 
     const handleAddShapes = (shape: string) => {
@@ -76,6 +94,11 @@ export default function Toolbar(){
     const handleClearAll = () => {
         if (window.confirm('Are you sure you want to empty the canvas?')) {
             dispatch(clearShapes());
+
+            // Log canvas state after clearing
+            setTimeout(() => {
+                logCanvasJSON(stageRef.current);
+            }, 0);
         }
     }
 
