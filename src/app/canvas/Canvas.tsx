@@ -11,7 +11,7 @@ const Canvas = () => {
     const isSelecting = useRef(false);
     const transformerRef = useRef<Konva.Transformer>(null);
     const selectionOverlayRef = useRef<Konva.Rect>(null);
-    const { stageRef, layerRef } = useCanvas();
+    const { stageRef, layerRef, zoom } = useCanvas();
     const dispatch = useAppDispatch();
 
     const { selectedObjectIds } = useAppSelector(state => state.canvas);
@@ -37,6 +37,14 @@ const Canvas = () => {
         width: 0,
         height: 0,
     });
+
+    // Expose stage to window for debugging
+    useEffect(() => {
+        if (stageRef.current) {
+            window.canvas = stageRef.current;
+            console.log("%c >>> Canvas exposed to window.canvas for debugging", "color: purple; font-weight: bold;");
+        }
+    }, [stageRef]);
 
     useEffect(() => {
         const layer = layerRef.current;
@@ -360,68 +368,77 @@ const Canvas = () => {
     };
 
     return (
-        <Stage
-            ref={stageRef}
-            width={window.innerWidth * 0.8}
-            height={window.innerHeight * 0.7}
-            style={{background: 'white'}}
-            onClick={handleStageClick}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseMove={handleMouseMove}
+        <div
+            className="overflow-auto"
+            style={{
+                maxWidth: window.innerWidth * 0.8,
+                maxHeight: window.innerHeight * 0.7,
+                background: 'white'
+            }}
         >
-            <Layer ref={layerRef}>
-                <Shapes />
-                {/* Selection rectangle */}
-                {selectionRectangle.visible && (
-                    <Rect
-                        x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                        y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                        width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                        height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                        fill="rgba(59, 130, 246, 0.1)"
-                        stroke="rgba(59, 130, 246, 0.4)"
-                        strokeWidth={1}
-                        dash={[4, 4]}
-                        listening={false}
-                    />
-                )}
+            <Stage
+                ref={stageRef}
+                width={window.innerWidth * 0.8 * (zoom / 100)}
+                height={window.innerHeight * 0.7 * (zoom / 100)}
+                style={{background: 'white'}}
+                onClick={handleStageClick}
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
+            >
+                <Layer ref={layerRef}>
+                    <Shapes />
+                    {/* Selection rectangle */}
+                    {selectionRectangle.visible && (
+                        <Rect
+                            x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                            y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                            width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                            height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                            fill="rgba(59, 130, 246, 0.1)"
+                            stroke="rgba(59, 130, 246, 0.4)"
+                            strokeWidth={1}
+                            dash={[4, 4]}
+                            listening={false}
+                        />
+                    )}
 
-                <Transformer
-                    ref={transformerRef}
-                    borderStroke="#3b82f6"
-                    borderStrokeWidth={2}
-                    anchorStroke="#3b82f6"
-                    anchorFill="#ffffff"
-                    anchorSize={8}
-                    anchorCornerRadius={2}
-                    boundBoxFunc={(oldBox, newBox) => {
-                        // Limit resize
-                        if (newBox.width < 5 || newBox.height < 5) {
-                            return oldBox;
-                        }
-                        return newBox;
-                    }}
-                />
-
-                {/* Draggable overlay for empty space between shapes */}
-                {overlayRect.visible && (
-                    <Rect
-                        id="selection-overlay"
-                        ref={selectionOverlayRef}
-                        x={overlayRect.x}
-                        y={overlayRect.y}
-                        width={overlayRect.width}
-                        height={overlayRect.height}
-                        fill="transparent"
-                        draggable
-                        onDragStart={handleOverlayDragStart}
-                        onDragMove={handleOverlayDragMove}
-                        onDragEnd={handleOverlayDragEnd}
+                    <Transformer
+                        ref={transformerRef}
+                        borderStroke="#3b82f6"
+                        borderStrokeWidth={2}
+                        anchorStroke="#3b82f6"
+                        anchorFill="#ffffff"
+                        anchorSize={8}
+                        anchorCornerRadius={2}
+                        boundBoxFunc={(oldBox, newBox) => {
+                            // Limit resize
+                            if (newBox.width < 5 || newBox.height < 5) {
+                                return oldBox;
+                            }
+                            return newBox;
+                        }}
                     />
-                )}
-            </Layer>
-        </Stage>
+
+                    {/* Draggable overlay for empty space between shapes */}
+                    {overlayRect.visible && (
+                        <Rect
+                            id="selection-overlay"
+                            ref={selectionOverlayRef}
+                            x={overlayRect.x}
+                            y={overlayRect.y}
+                            width={overlayRect.width}
+                            height={overlayRect.height}
+                            fill="transparent"
+                            draggable
+                            onDragStart={handleOverlayDragStart}
+                            onDragMove={handleOverlayDragMove}
+                            onDragEnd={handleOverlayDragEnd}
+                        />
+                    )}
+                </Layer>
+            </Stage>
+        </div>
     );
 };
 

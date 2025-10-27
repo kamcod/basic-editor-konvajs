@@ -5,6 +5,7 @@ import Toolbar from "@/app/canvas/Toolbar";
 import { useAppDispatch } from "@/store/hooks";
 import { setShapes, setSelectedObjectIds } from "@/store/reducers/canvasSlice";
 import { loadCanvasFromLocalStorage } from "@/utils/canvasUtils";
+import ZoomBar from "@/app/canvas/components/ZoomBar";
 
 const Canvas = dynamic(() => import('@/app/canvas/Canvas'), {
     ssr: false,
@@ -71,10 +72,14 @@ export default function CanvasWrapper(){
             </header>
 
             {/* Main Content */}
-            <div className="flex h-[calc(100vh-78px)]">
+            <div className="flex h-[calc(100vh-78px)] relative">
                 <Toolbar />
                 <div className="flex-1 flex justify-center items-center bg-gray-100 px-6 py-3">
                     <Canvas />
+                </div>
+                {/* Fixed ZoomBar at bottom */}
+                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+                    <ZoomBar />
                 </div>
             </div>
         </div>
