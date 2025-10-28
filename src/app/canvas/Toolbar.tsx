@@ -115,35 +115,35 @@ export default function Toolbar(){
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Shapes
                 </h3>
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-3 gap-2">
                     <button
                         onClick={() => handleAddShapes('Rect')}
-                        className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        className="flex items-center justify-center p-3 text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        title="Rectangle"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <rect x="4" y="4" width="16" height="16" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span>Rectangle</span>
                     </button>
 
                     <button
                         onClick={() => handleAddShapes('Circle')}
-                        className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        className="flex items-center justify-center p-3 text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        title="Circle"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="8" strokeWidth={2}/>
                         </svg>
-                        <span>Circle</span>
                     </button>
 
                     <button
                         onClick={() => handleAddShapes('Arrow')}
-                        className="group flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        className="flex items-center justify-center p-3 text-gray-700 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all border border-gray-200 hover:border-blue-300"
+                        title="Arrow"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
-                        <span>Arrow</span>
                     </button>
                 </div>
             </div>
@@ -153,15 +153,15 @@ export default function Toolbar(){
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Actions
                 </h3>
-                <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-3 gap-2">
                     <button
                         onClick={handleClearAll}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-lg transition-all border border-gray-200 hover:border-red-300"
+                        className="flex items-center justify-center p-3 text-gray-700 bg-gray-50 hover:bg-red-50 hover:text-red-600 rounded-lg transition-all border border-gray-200 hover:border-red-300"
+                        title="Clear All"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        <span>Clear All</span>
                     </button>
                 </div>
             </div>
