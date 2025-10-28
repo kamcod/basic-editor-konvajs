@@ -1,6 +1,6 @@
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {extractCanvasJSON} from "@/utils/canvasUtils";
-import {setSelectedObjectIds, setShapes, updateRedo, updateUndo} from "@/store/reducers/canvasSlice";
+import {setSelectedObjectIds, setShapes, updateUndo, pushToRedo, popFromUndo, popFromRedo, pushToUndoWithoutClearingRedo} from "@/store/reducers/canvasSlice";
 import {useCanvas} from "@/contexts/CanvasContext";
 
 const useCanvasHistory = () => {
@@ -46,23 +46,34 @@ const useCanvasHistory = () => {
         // Need at least 2 states: current state and previous state
         if(undoList.length < 2) return;
 
-        // The last item in undo is the current state
-        // We want to go to the second-to-last item (the previous state)
+        // Get the current state (last item in undo)
         const currentState = undoList[undoList.length - 1];
+
+        // Remove it from undo
+        dispatch(popFromUndo());
+
+        // Add it to redo
+        dispatch(pushToRedo(currentState));
+
+        // Load the previous state (which is now the last item in undo)
         const previousState = undoList[undoList.length - 2];
-
-        // Save current state to redo
-        dispatch(updateRedo(currentState));
-
-        // Load the previous state
         handleLoadCanvas(previousState);
     };
+
     const handleRedo = () => {
-        const data = [...redoList];
-        if(!data.length) return;
-        const canvasString = data.pop();
-        handleLoadCanvas(canvasString);
-        dispatch(updateUndo(canvasString));
+        if(!redoList.length) return;
+
+        // Get the state to restore from redo
+        const stateToRestore = redoList[redoList.length - 1];
+
+        // Remove it from redo
+        dispatch(popFromRedo());
+
+        // Add it to undo (without clearing redo)
+        dispatch(pushToUndoWithoutClearingRedo(stateToRestore));
+
+        // Load the state
+        handleLoadCanvas(stateToRestore);
     };
 
     return { updateHistory, handleUndo, handleRedo }

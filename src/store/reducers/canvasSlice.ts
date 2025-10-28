@@ -81,14 +81,20 @@ const canvasSlice = createSlice({
             // Clear entire redo stack when a new action happens
             state.redo = [];
         },
-        updateRedo: (state, action: PayloadAction<string>) => {
+        pushToRedo: (state, action: PayloadAction<string>) => {
             state.redo.push(action.payload);
-            if(state.undo.length > 0) {
-                state.undo.pop();
-            }
+        },
+        popFromUndo: (state) => {
+            state.undo.pop();
+        },
+        popFromRedo: (state) => {
+            state.redo.pop();
+        },
+        pushToUndoWithoutClearingRedo: (state, action: PayloadAction<string>) => {
+            state.undo.push(action.payload);
         }
     },
 });
 
-export const { setShapes, addShape, clearShapes, setSelectedObjectIds, updateUndo, updateRedo } = canvasSlice.actions;
+export const { setShapes, addShape, clearShapes, setSelectedObjectIds, updateUndo, pushToRedo, popFromUndo, popFromRedo, pushToUndoWithoutClearingRedo } = canvasSlice.actions;
 export default canvasSlice.reducer;
