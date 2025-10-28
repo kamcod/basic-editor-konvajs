@@ -48,8 +48,8 @@ const DUMMY_SHAPES: ShapeI[] = [
 interface InitialStateI {
     shapes: ShapeI[];
     selectedObjectIds: string[];
-    undo: any[],
-    redo: any[]
+    undo: string[];
+    redo: string[];
 }
 
 const initialState: InitialStateI = {
@@ -76,25 +76,27 @@ const canvasSlice = createSlice({
         setSelectedObjectIds: (state, action: PayloadAction<string[]>) => {
             state.selectedObjectIds = action.payload;
         },
-        updateUndo: (state, action: PayloadAction<string>) => {
+        saveState: (state, action: PayloadAction<string>) => {
             state.undo.push(action.payload);
             // Clear entire redo stack when a new action happens
             state.redo = [];
         },
-        pushToRedo: (state, action: PayloadAction<string>) => {
-            state.redo.push(action.payload);
+        moveToRedo: (state) => {
+            // Move current state from undo to redo
+            const currentState = state.undo.pop();
+            if (currentState) {
+                state.redo.push(currentState);
+            }
         },
-        popFromUndo: (state) => {
-            state.undo.pop();
-        },
-        popFromRedo: (state) => {
-            state.redo.pop();
-        },
-        pushToUndoWithoutClearingRedo: (state, action: PayloadAction<string>) => {
-            state.undo.push(action.payload);
+        moveToUndo: (state) => {
+            // Move state from redo to undo
+            const stateToRestore = state.redo.pop();
+            if (stateToRestore) {
+                state.undo.push(stateToRestore);
+            }
         }
     },
 });
 
-export const { setShapes, addShape, clearShapes, setSelectedObjectIds, updateUndo, pushToRedo, popFromUndo, popFromRedo, pushToUndoWithoutClearingRedo } = canvasSlice.actions;
+export const { setShapes, addShape, clearShapes, setSelectedObjectIds, saveState, moveToRedo, moveToUndo } = canvasSlice.actions;
 export default canvasSlice.reducer;

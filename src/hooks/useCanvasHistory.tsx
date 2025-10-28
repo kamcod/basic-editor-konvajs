@@ -1,6 +1,6 @@
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {extractCanvasJSON} from "@/utils/canvasUtils";
-import {setSelectedObjectIds, setShapes, updateUndo, pushToRedo, popFromUndo, popFromRedo, pushToUndoWithoutClearingRedo} from "@/store/reducers/canvasSlice";
+import {setSelectedObjectIds, setShapes, saveState, moveToRedo, moveToUndo} from "@/store/reducers/canvasSlice";
 import {useCanvas} from "@/contexts/CanvasContext";
 
 const useCanvasHistory = () => {
@@ -28,7 +28,7 @@ const useCanvasHistory = () => {
         }
 
         const jsonString = JSON.stringify(canvasData, null, 2);
-        dispatch(updateUndo(jsonString));
+        dispatch(saveState(jsonString));
 
         // Save to localStorage
         try {
@@ -46,31 +46,24 @@ const useCanvasHistory = () => {
         // Need at least 2 states: current state and previous state
         if(undoList.length < 2) return;
 
-        // Get the current state (last item in undo)
-        const currentState = undoList[undoList.length - 1];
-
-        // Remove it from undo
-        dispatch(popFromUndo());
-
-        // Add it to redo
-        dispatch(pushToRedo(currentState));
-
-        // Load the previous state (which is now the last item in undo)
+        // Get the previous state BEFORE moving (it's the second-to-last item)
         const previousState = undoList[undoList.length - 2];
+
+        // Move current state from undo to redo
+        dispatch(moveToRedo());
+
+        // Load the previous state
         handleLoadCanvas(previousState);
     };
 
     const handleRedo = () => {
         if(!redoList.length) return;
 
-        // Get the state to restore from redo
+        // Get the state to restore BEFORE moving (it's the last item in redo)
         const stateToRestore = redoList[redoList.length - 1];
 
-        // Remove it from redo
-        dispatch(popFromRedo());
-
-        // Add it to undo (without clearing redo)
-        dispatch(pushToUndoWithoutClearingRedo(stateToRestore));
+        // Move state from redo to undo
+        dispatch(moveToUndo());
 
         // Load the state
         handleLoadCanvas(stateToRestore);
