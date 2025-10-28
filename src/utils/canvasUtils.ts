@@ -46,27 +46,6 @@ export const extractCanvasJSON = (stage: Konva.Stage | null): { shapes: ShapeI[]
 };
 
 const CANVAS_STORAGE_KEY = 'canvas_state';
-
-export const logCanvasJSON = (stage: Konva.Stage | null) => {
-    const canvasData = extractCanvasJSON(stage);
-    if (!canvasData) {
-        return;
-    }
-
-    const jsonString = JSON.stringify(canvasData, null, 2);
-
-    // Save to localStorage
-    try {
-        localStorage.setItem(CANVAS_STORAGE_KEY, jsonString);
-        console.log("%c >>> Canvas Updated & Saved to LocalStorage!!!", "color: green; font-weight: bold;");
-    } catch (error) {
-        console.error("Failed to save to localStorage:", error);
-        console.log("%c >>> Canvas Updated (Not Saved)!!!", "color: orange; font-weight: bold;");
-    }
-
-    console.log(canvasData);
-};
-
 export const loadCanvasFromLocalStorage = (): { shapes: ShapeI[], selectedObjectIds: string[] } | null => {
     try {
         const storedData = localStorage.getItem(CANVAS_STORAGE_KEY);
@@ -84,14 +63,5 @@ export const loadCanvasFromLocalStorage = (): { shapes: ShapeI[], selectedObject
     } catch (error) {
         console.error("Failed to load from localStorage:", error);
         return null;
-    }
-};
-
-export const clearCanvasFromLocalStorage = () => {
-    try {
-        localStorage.removeItem(CANVAS_STORAGE_KEY);
-        console.log("Canvas data cleared from localStorage");
-    } catch (error) {
-        console.error("Failed to clear localStorage:", error);
     }
 };

@@ -4,8 +4,8 @@ import {useRef, useState, useEffect} from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setSelectedObjectIds} from "@/store/reducers/canvasSlice";
-import { logCanvasJSON } from "@/utils/canvasUtils";
 import Konva from "konva";
+import useCanvasHistory from "@/hooks/useCanvasHistory";
 
 const Canvas = () => {
     const isSelecting = useRef(false);
@@ -13,6 +13,7 @@ const Canvas = () => {
     const selectionOverlayRef = useRef<Konva.Rect>(null);
     const { stageRef, layerRef, zoom } = useCanvas();
     const dispatch = useAppDispatch();
+    const { updateHistory } = useCanvasHistory();
 
     const { selectedObjectIds } = useAppSelector(state => state.canvas);
     const [isDragging, setIsDragging] = useState(false);
@@ -141,8 +142,7 @@ const Canvas = () => {
                     layer.batchDraw();
 
                     // Log canvas state after group drag
-                    const stage = layer.getStage();
-                    logCanvasJSON(stage);
+                    updateHistory();
                 });
             }
         });
@@ -364,7 +364,7 @@ const Canvas = () => {
         layer.batchDraw();
 
         // Log canvas state after overlay drag
-        logCanvasJSON(stage);
+        updateHistory();
     };
 
     return (

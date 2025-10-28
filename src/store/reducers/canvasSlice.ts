@@ -48,11 +48,15 @@ const DUMMY_SHAPES: ShapeI[] = [
 interface InitialStateI {
     shapes: ShapeI[];
     selectedObjectIds: string[];
+    undo: any[],
+    redo: any[]
 }
 
 const initialState: InitialStateI = {
     shapes: DUMMY_SHAPES,
     selectedObjectIds: [],
+    undo: [],
+    redo: []
 };
 
 const canvasSlice = createSlice({
@@ -72,8 +76,20 @@ const canvasSlice = createSlice({
         setSelectedObjectIds: (state, action: PayloadAction<string[]>) => {
             state.selectedObjectIds = action.payload;
         },
+        updateUndo: (state, action: PayloadAction<string>) => {
+            state.undo.push(action.payload);
+            if(state.redo.length > 0) {
+                state.redo.pop();
+            }
+        },
+        updateRedo: (state, action: PayloadAction<string>) => {
+            state.redo.push(action.payload);
+            if(state.undo.length > 0) {
+                state.undo.pop();
+            }
+        }
     },
 });
 
-export const { setShapes, addShape, clearShapes, setSelectedObjectIds } = canvasSlice.actions;
+export const { setShapes, addShape, clearShapes, setSelectedObjectIds, updateUndo, updateRedo } = canvasSlice.actions;
 export default canvasSlice.reducer;

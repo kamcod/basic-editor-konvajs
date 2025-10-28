@@ -1,20 +1,20 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Rect, Circle, Arrow} from "react-konva";
 import {useAppSelector} from "@/store/hooks";
 import {BasicObjectAttributes, CircleI, ArrowI, ShapeI} from "@/app/types/canvas.dto";
 import { useCanvas } from "@/contexts/CanvasContext";
-import { logCanvasJSON } from "@/utils/canvasUtils";
+import useCanvasHistory from "@/hooks/useCanvasHistory";
 
 const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
-    const { stageRef } = useCanvas();
+    const { updateHistory } = useCanvasHistory();
     const { id, name, x, y, width, height, fill, rotation, draggable, scaleX, scaleY, offsetX, offsetY, opacity } = data;
 
     const handleDragEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     const handleTransformEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     return <Rect
@@ -38,15 +38,15 @@ const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
 }
 
 const AddCircle = ( { data }: { data: CircleI }) => {
-    const { stageRef } = useCanvas();
+    const { updateHistory } = useCanvasHistory();
     const { id, name, x, y, radius, stroke, strokeWidth, fill, draggable, scaleX, scaleY, offsetX, offsetY, opacity } = data;
 
     const handleDragEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     const handleTransformEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     return <Circle
@@ -69,15 +69,15 @@ const AddCircle = ( { data }: { data: CircleI }) => {
     />
 }
 const AddArrow = ( { data }: { data: ArrowI }) => {
-    const { stageRef } = useCanvas();
+    const { updateHistory } = useCanvasHistory();
     const { id, name, x, y, points, pointerLength, pointerWidth, fill, stroke, strokeWidth, draggable, rotation, scaleX, scaleY, offsetX, offsetY, opacity } = data;
 
     const handleDragEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     const handleTransformEnd = () => {
-        logCanvasJSON(stageRef.current);
+        updateHistory();
     };
 
     return <Arrow

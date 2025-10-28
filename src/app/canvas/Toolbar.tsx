@@ -1,11 +1,10 @@
 import {useAppDispatch} from "@/store/hooks";
 import {addShape, clearShapes} from "@/store/reducers/canvasSlice";
-import { useCanvas } from "@/contexts/CanvasContext";
-import { logCanvasJSON } from "@/utils/canvasUtils";
+import useCanvasHistory from "@/hooks/useCanvasHistory";
 
 export default function Toolbar(){
     const dispatch = useAppDispatch();
-    const { stageRef } = useCanvas();
+    const { updateHistory } = useCanvasHistory();
 
     const addRectangle = () => {
         const newRect = {
@@ -25,7 +24,7 @@ export default function Toolbar(){
 
         // Log canvas state after adding shape
         setTimeout(() => {
-            logCanvasJSON(stageRef.current);
+            updateHistory();
         }, 0);
     }
 
@@ -47,7 +46,7 @@ export default function Toolbar(){
 
         // Log canvas state after adding shape
         setTimeout(() => {
-            logCanvasJSON(stageRef.current);
+            updateHistory();
         }, 0);
     }
 
@@ -71,7 +70,7 @@ export default function Toolbar(){
 
         // Log canvas state after adding shape
         setTimeout(() => {
-            logCanvasJSON(stageRef.current);
+            updateHistory();
         }, 0);
     }
 
@@ -97,7 +96,7 @@ export default function Toolbar(){
 
             // Log canvas state after clearing
             setTimeout(() => {
-                logCanvasJSON(stageRef.current);
+                updateHistory();
             }, 0);
         }
     }

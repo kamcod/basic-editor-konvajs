@@ -6,6 +6,8 @@ import { useAppDispatch } from "@/store/hooks";
 import { setShapes, setSelectedObjectIds } from "@/store/reducers/canvasSlice";
 import { loadCanvasFromLocalStorage } from "@/utils/canvasUtils";
 import ZoomBar from "@/app/canvas/components/ZoomBar";
+import { Undo, Redo } from "lucide-react";
+import useCanvasHistory from "@/hooks/useCanvasHistory";
 
 const Canvas = dynamic(() => import('@/app/canvas/Canvas'), {
     ssr: false,
@@ -13,9 +15,10 @@ const Canvas = dynamic(() => import('@/app/canvas/Canvas'), {
 
 export default function CanvasWrapper(){
     const dispatch = useAppDispatch();
+    const { handleUndo, handleRedo, updateHistory} = useCanvasHistory();
 
     const handleLogJSON = () => {
-        console.log("Canvas data logged");
+        updateHistory();
     }
 
     const handleLoadCanvas = () => {
@@ -49,6 +52,12 @@ export default function CanvasWrapper(){
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <button className="cursor-pointer" onClick={handleUndo}>
+                            <Undo className="text-gray-700" />
+                        </button>
+                        <button className="cursor-pointer" onClick={handleRedo}>
+                            <Redo className="text-gray-700" />
+                        </button>
                         <button
                             onClick={handleLoadCanvas}
                             className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all shadow-md hover:shadow-lg text-sm font-medium"
