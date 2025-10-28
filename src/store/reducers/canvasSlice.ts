@@ -78,9 +78,8 @@ const canvasSlice = createSlice({
         },
         updateUndo: (state, action: PayloadAction<string>) => {
             state.undo.push(action.payload);
-            if(state.redo.length > 0) {
-                state.redo.pop();
-            }
+            // Clear entire redo stack when a new action happens
+            state.redo = [];
         },
         updateRedo: (state, action: PayloadAction<string>) => {
             state.redo.push(action.payload);

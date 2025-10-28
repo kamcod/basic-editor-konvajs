@@ -14,8 +14,17 @@ const Canvas = () => {
     const { stageRef, layerRef, zoom } = useCanvas();
     const dispatch = useAppDispatch();
     const { updateHistory } = useCanvasHistory();
+    const initialStateSaved = useRef(false);
 
     const { selectedObjectIds } = useAppSelector(state => state.canvas);
+
+    // Save initial state to undo on mount
+    useEffect(() => {
+        if (!initialStateSaved.current && stageRef.current) {
+            updateHistory();
+            initialStateSaved.current = true;
+        }
+    }, [stageRef.current]);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null);
     const [selectionRectangle, setSelectionRectangle] = useState({

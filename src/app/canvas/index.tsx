@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Toolbar from "@/app/canvas/Toolbar";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setShapes, setSelectedObjectIds } from "@/store/reducers/canvasSlice";
 import { loadCanvasFromLocalStorage } from "@/utils/canvasUtils";
 import ZoomBar from "@/app/canvas/components/ZoomBar";
@@ -16,6 +16,7 @@ const Canvas = dynamic(() => import('@/app/canvas/Canvas'), {
 export default function CanvasWrapper(){
     const dispatch = useAppDispatch();
     const { handleUndo, handleRedo, updateHistory} = useCanvasHistory();
+    const { undo, redo } = useAppSelector(state => state.canvas);
 
     const handleLogJSON = () => {
         updateHistory();
@@ -52,11 +53,29 @@ export default function CanvasWrapper(){
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="cursor-pointer" onClick={handleUndo}>
-                            <Undo className="text-gray-700" />
+                        <button
+                            onClick={handleUndo}
+                            disabled={undo.length < 2}
+                            className={`p-2 rounded-lg transition-all ${
+                                undo.length < 2
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
+                            }`}
+                            title="Undo (Ctrl+Z)"
+                        >
+                            <Undo className="w-5 h-5" />
                         </button>
-                        <button className="cursor-pointer" onClick={handleRedo}>
-                            <Redo className="text-gray-700" />
+                        <button
+                            onClick={handleRedo}
+                            disabled={redo.length === 0}
+                            className={`p-2 rounded-lg transition-all ${
+                                redo.length === 0
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
+                            }`}
+                            title="Redo (Ctrl+Y)"
+                        >
+                            <Redo className="w-5 h-5" />
                         </button>
                         <button
                             onClick={handleLoadCanvas}

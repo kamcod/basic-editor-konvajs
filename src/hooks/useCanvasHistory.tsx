@@ -43,11 +43,19 @@ const useCanvasHistory = () => {
     };
 
     const handleUndo = () => {
-        const data = [...undoList];
-        if(!data.length) return;
-        const canvasString = data.pop();
-        handleLoadCanvas(canvasString);
-        dispatch(updateRedo(canvasString));
+        // Need at least 2 states: current state and previous state
+        if(undoList.length < 2) return;
+
+        // The last item in undo is the current state
+        // We want to go to the second-to-last item (the previous state)
+        const currentState = undoList[undoList.length - 1];
+        const previousState = undoList[undoList.length - 2];
+
+        // Save current state to redo
+        dispatch(updateRedo(currentState));
+
+        // Load the previous state
+        handleLoadCanvas(previousState);
     };
     const handleRedo = () => {
         const data = [...redoList];
