@@ -6,8 +6,11 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setSelectedObjectIds} from "@/store/reducers/canvasSlice";
 import Konva from "konva";
 import useCanvasHistory from "@/hooks/useCanvasHistory";
+import {useYjsConnection} from "@/hooks/useYjsConnection";
 
 const Canvas = () => {
+    const { ydoc, provider } = useYjsConnection('canvas-real-time');
+
     const isSelecting = useRef(false);
     const transformerRef = useRef<Konva.Transformer>(null);
     const selectionOverlayRef = useRef<Konva.Rect>(null);
@@ -17,6 +20,19 @@ const Canvas = () => {
     const initialStateSaved = useRef(false);
 
     const { selectedObjectIds } = useAppSelector(state => state.canvas);
+
+    useEffect(() => {
+        if (!ydoc) return;
+        const shapes = ydoc.getMap('shapes');
+
+        // When any user adds/moves a shape
+        shapes.observeDeep(() => {
+            console.log('🟦 Updated shapes:', Array.from(shapes.entries()));
+        });
+
+        // Example: add a shape
+        shapes.set('rect1', { x: 100, y: 100, width: 80, height: 50, fill: 'blue' });
+    }, [ydoc]);
 
     // Save initial state to undo on mount
     useEffect(() => {
