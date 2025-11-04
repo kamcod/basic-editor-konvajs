@@ -246,7 +246,7 @@ const Canvas = () => {
             );
         });
 
-        const ids = shapes.map((shape: Konva.Node) => shape.id()).filter(Boolean);
+        const ids = shapes.map((shape: Konva.Node) => shape.id()).filter(id => id && id !== "selection-overlay");
         dispatch(setSelectedObjectIds(ids))
 
         setTimeout(() => {
