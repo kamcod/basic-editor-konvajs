@@ -12,7 +12,7 @@ export function useYjsConnection(roomName: string) {
         const ydocInstance = new Y.Doc();
 
         const providerInstance = new WebsocketProvider(
-            'ws://172.21.48.1:1234', // your Yjs WebSocket server
+            'ws://172.16.11.210:1234', // your Yjs WebSocket server
             roomName,
             ydocInstance
         );
