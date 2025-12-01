@@ -40,12 +40,14 @@ const Canvas = () => {
         y: number;
         width: number;
         height: number;
+        listening: boolean;
     }>({
         visible: false,
         x: 0,
         y: 0,
         width: 0,
         height: 0,
+        listening: true,
     });
 
     // Expose stage to window for debugging
@@ -86,26 +88,65 @@ const Canvas = () => {
                 const cornerOffset = transformer.anchorSize();
                 const rotateHandleOffset = transformer.rotateAnchorOffset() + cornerOffset;
                 const box = transformer.getClientRect();
-                setOverlayRect({
+
+                const newRect = {
                     visible: true,
                     x: box.x + cornerOffset/2,
                     y: box.y + rotateHandleOffset - cornerOffset/2,
                     width: box.width - cornerOffset,
                     height: box.height - rotateHandleOffset,
+                    listening: true,
+                };
+
+                // Only update if values actually changed to avoid re-renders
+                setOverlayRect(prev => {
+                    if (prev.visible !== newRect.visible ||
+                        Math.abs(prev.x - newRect.x) > 0.5 ||
+                        Math.abs(prev.y - newRect.y) > 0.5 ||
+                        Math.abs(prev.width - newRect.width) > 0.5 ||
+                        Math.abs(prev.height - newRect.height) > 0.5 ||
+                        prev.listening !== newRect.listening) {
+                        return newRect;
+                    }
+                    return prev;
                 });
             } else {
-                setOverlayRect({
-                    visible: false,
-                    x: 0,
-                    y: 0,
-                    width: 0,
-                    height: 0,
+                setOverlayRect(prev => {
+                    if (prev.visible) {
+                        return {
+                            visible: false,
+                            x: 0,
+                            y: 0,
+                            width: 0,
+                            height: 0,
+                            listening: true,
+                        };
+                    }
+                    return prev;
                 });
             }
         };
 
         // Listen to transformer events to update overlay
         transformer.on('transform.overlay', updateOverlayPosition);
+
+        // Remove old transformer listeners
+        transformer.off('transformstart.overlay');
+        transformer.off('transformend.update');
+
+        // Disable overlay listening during transformation to prevent blocking transformer
+        transformer.on('transformstart.overlay', () => {
+            setOverlayRect(prev => ({ ...prev, listening: false }));
+        });
+
+        // Listen to transform end to update overlay and history
+        transformer.on('transformend.update', () => {
+            setOverlayRect(prev => ({ ...prev, listening: true }));
+            updateOverlayPosition();
+            transformer.forceUpdate();
+            layer.batchDraw();
+            updateHistory();
+        });
 
         // Enable dragging on all selected nodes
         selectedNodes.forEach((node: Konva.Node) => {
@@ -348,6 +389,9 @@ const Canvas = () => {
             node.setAttr('initialPos', null);
         });
 
+        // Force update transformer first to get correct bounds
+        transformer.forceUpdate();
+
         // Update overlay position to match new transformer bounds
         const cornerOffset = transformer.anchorSize();
         const rotateHandleOffset = transformer.rotateAnchorOffset() + cornerOffset;
@@ -358,18 +402,18 @@ const Canvas = () => {
         const newWidth = box.width - cornerOffset;
         const newHeight = box.height - rotateHandleOffset;
 
+        // Reset overlay rect position to match the new calculated position
+        e.target.position({ x: newX, y: newY });
+
         setOverlayRect({
             visible: true,
             x: newX,
             y: newY,
             width: newWidth,
             height: newHeight,
+            listening: true,
         });
 
-        // Reset overlay rect position to match the new calculated position
-        e.target.position({ x: newX, y: newY });
-
-        transformer.forceUpdate();
         layer.batchDraw();
 
         // Log canvas state after overlay drag
@@ -412,6 +456,24 @@ const Canvas = () => {
                         />
                     )}
 
+                    {/* Draggable overlay for empty space between shapes */}
+                    {overlayRect.visible && (
+                        <Rect
+                            id="selection-overlay"
+                            ref={selectionOverlayRef}
+                            x={overlayRect.x}
+                            y={overlayRect.y}
+                            width={overlayRect.width}
+                            height={overlayRect.height}
+                            fill="transparent"
+                            draggable={overlayRect.listening}
+                            listening={overlayRect.listening}
+                            onDragStart={handleOverlayDragStart}
+                            onDragMove={handleOverlayDragMove}
+                            onDragEnd={handleOverlayDragEnd}
+                        />
+                    )}
+
                     <Transformer
                         ref={transformerRef}
                         borderStroke="#3b82f6"
@@ -428,23 +490,6 @@ const Canvas = () => {
                             return newBox;
                         }}
                     />
-
-                    {/* Draggable overlay for empty space between shapes */}
-                    {overlayRect.visible && (
-                        <Rect
-                            id="selection-overlay"
-                            ref={selectionOverlayRef}
-                            x={overlayRect.x}
-                            y={overlayRect.y}
-                            width={overlayRect.width}
-                            height={overlayRect.height}
-                            fill="transparent"
-                            draggable
-                            onDragStart={handleOverlayDragStart}
-                            onDragMove={handleOverlayDragMove}
-                            onDragEnd={handleOverlayDragEnd}
-                        />
-                    )}
                 </Layer>
             </Stage>
         </div>
