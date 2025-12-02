@@ -70,7 +70,7 @@ export default function Home() {
   }, [provider]);
 
   return (
-      <div className="relative">
+      <div className="relative overflow-hidden">
         {/* Draw cursors of others */}
         {remoteCursors.map((state) => (
             <div
