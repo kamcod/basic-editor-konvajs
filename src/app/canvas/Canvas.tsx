@@ -3,7 +3,7 @@ import Shapes from "@/app/canvas/components/Shapes";
 import { useRef, useEffect } from "react";
 import { useCanvas } from "@/contexts/CanvasContext";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setSelectedObjectIds } from "@/store/reducers/canvasSlice";
+import { setSelectedObjectIds, setShapes } from "@/store/reducers/canvasSlice";
 import Konva from "konva";
 import useCanvasHistory from "@/hooks/useCanvasHistory";
 import { useCanvasEvents } from "@/hooks/useCanvasEvents";
@@ -14,25 +14,64 @@ const Canvas = () => {
 
     const transformerRef = useRef<Konva.Transformer>(null);
     const selectionOverlayRef = useRef<Konva.Rect>(null);
-    const { stageRef, layerRef, zoom } = useCanvas();
+    const { stageRef, layerRef, zoom, setYdoc } = useCanvas();
     const dispatch = useAppDispatch();
-    const { updateHistory } = useCanvasHistory();
+    const { updateHistory } = useCanvasHistory({ ydoc });
     const initialStateSaved = useRef(false);
+
+    // Set ydoc in context so all components can access it
+    useEffect(() => {
+        if (ydoc) {
+            setYdoc(ydoc);
+        }
+    }, [ydoc, setYdoc]);
 
     const { selectedObjectIds } = useAppSelector(state => state.canvas);
 
     useEffect(() => {
         if (!ydoc) return;
-        const shapes = ydoc.getMap('shapes');
 
-        // When any user adds/moves a shape
-        shapes.observeDeep(() => {
-            console.log('🟦 Updated shapes:', Array.from(shapes.entries()));
-        });
+        const canvasState = ydoc.getMap('canvasState');
 
-        // Example: add a shape
-        shapes.set('rect1', { x: 100, y: 100, width: 80, height: 50, fill: 'blue' });
-    }, [ydoc]);
+        // Load initial state if available
+        const shapes = canvasState.get('shapes');
+        const selectedObjectIds = canvasState.get('selectedObjectIds');
+
+        console.log('canvas state from collaboration', shapes, selectedObjectIds);
+        if (shapes && Array.isArray(shapes) && shapes.length > 0) {
+            dispatch(setShapes(shapes));
+            if (selectedObjectIds && Array.isArray(selectedObjectIds)) {
+                dispatch(setSelectedObjectIds(selectedObjectIds));
+            }
+            console.log('🟦 Loaded initial canvas state from Yjs');
+        }
+
+        // Observe changes from other users
+        const observer = (event: any, transaction: any) => {
+            // Ignore local updates (our own changes)
+            if (transaction.origin === 'local-update') {
+                return;
+            }
+
+            // This is a remote update from another user
+            const updatedShapes = canvasState.get('shapes');
+            const updatedSelectedIds = canvasState.get('selectedObjectIds');
+
+            if (updatedShapes && Array.isArray(updatedShapes)) {
+                dispatch(setShapes(updatedShapes));
+                if (updatedSelectedIds && Array.isArray(updatedSelectedIds)) {
+                    dispatch(setSelectedObjectIds(updatedSelectedIds));
+                }
+                console.log('🟦 Received remote canvas update from Yjs:', updatedShapes.length, 'shapes');
+            }
+        };
+
+        canvasState.observe(observer);
+
+        return () => {
+            canvasState.unobserve(observer);
+        };
+    }, [ydoc, dispatch]);
 
     // Save initial state to undo on mount
     useEffect(() => {
