@@ -1,8 +1,7 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {Rect, Circle, Arrow} from "react-konva";
 import {useAppSelector} from "@/store/hooks";
 import {BasicObjectAttributes, CircleI, ArrowI, ShapeI} from "@/app/types/canvas.dto";
-import { useCanvas } from "@/contexts/CanvasContext";
 import useCanvasHistory from "@/hooks/useCanvasHistory";
 
 const Rectangle = ( { data }: { data: BasicObjectAttributes }) => {
