@@ -11,6 +11,8 @@ export default function Home() {
     if (!provider) return;
 
     const awareness = provider.awareness;
+    if (!awareness) return;
+
     const STALE_CURSOR_TIMEOUT = 5000; // 5 seconds
 
     // Clear any old cursor data on mount
@@ -18,6 +20,7 @@ export default function Home() {
 
     // Update your own cursor on mouse move
     const handleMouseMove = (e: MouseEvent) => {
+      if (!awareness) return;
       awareness.setLocalStateField('cursor', {
         x: e.clientX,
         y: e.clientY,
@@ -29,6 +32,7 @@ export default function Home() {
 
     // Listen for others' awareness changes
     const onAwarenessChange = () => {
+      if (!awareness) return;
       const localClientId = awareness.clientID;
       const now = Date.now();
 
@@ -62,10 +66,12 @@ export default function Home() {
     // Cleanup on unmount
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      awareness.off('change', onAwarenessChange);
+      if (awareness) {
+        awareness.off('change', onAwarenessChange);
+        // Clear cursor when component unmounts
+        awareness.setLocalStateField('cursor', null);
+      }
       clearInterval(cleanupInterval);
-      // Clear cursor when component unmounts
-      awareness.setLocalStateField('cursor', null);
     };
   }, [provider]);
 
