@@ -28,9 +28,17 @@ export interface ArrowI extends BasicObjectAttributes {
     stroke: string;
     strokeWidth: number;
 }
+export interface StarI extends BasicObjectAttributes {
+    numPoints: number;
+    innerRadius: number;
+    outerRadius: number;
+    stroke: string;
+    strokeWidth: number;
+}
 
-export type ShapeType = 'Rect' | 'Circle' | 'Arrow'
+export type ShapeType = 'Rect' | 'Circle' | 'Arrow' | 'Star';
+
 export interface ShapeI {
     type: ShapeType;
-    attributes: BasicObjectAttributes | CircleI | ArrowI;
+    attributes: BasicObjectAttributes | CircleI | ArrowI | StarI;
 }
